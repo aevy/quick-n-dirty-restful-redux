@@ -1,0 +1,16 @@
+{
+  "name": "quick-n-dirty-restful-redux",
+  "version": "0.1",
+  "description": "Simple redux library for quick prototyping",
+  "main": "index.ts",
+  "repository": "https://github.com/aevy/quick-n-dirty-restful-redux.git",
+  "author": "Tobias Neil <brortobiasneil@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react-redux": "^5.0.16"
+  }
+}
