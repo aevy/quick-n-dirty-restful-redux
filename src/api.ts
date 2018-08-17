@@ -2,17 +2,17 @@ import { IdType, Base } from "./types";
 
 type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-interface ApiFactoryOptions {
+export interface ApiFactoryOptions {
   host: string;
   cors?: boolean;
 }
 
-interface ApiOptions<T> {
+export interface ApiOptions<T> {
   singular?: string;
   accessor?: (x: any) => T | void;
 }
 
-interface ApiConfig {
+export interface ApiConfig {
   entityName: string;
   resource: string;
 }
@@ -43,7 +43,7 @@ interface JsonRequestData<T> {
 const Factory: (factoryOpts: ApiFactoryOptions) => ApiFactory = ({
   host,
   cors
-}) => <T>(resource, { singular, accessor }) => {
+}) => <T>(resource: string, { singular, accessor }: ApiOptions<T>) => {
   const jsonRequest = <T>(resource: string) => ({
     id,
     body,

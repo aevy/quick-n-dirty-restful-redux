@@ -68,17 +68,15 @@ export const createResourceActions = <State, T>(
   };
 };
 
-export const createResourceReducer = <
-  Collection extends Object,
-  Item extends { id: IdType }
->(
+export const createResourceReducer = <Collection extends Object, Item>(
   resourceName: string,
   indexField?: string
 ): ReducerMap<Collection> => {
   const namespace = resourceName.toUpperCase();
-  const getIndex = x => x[indexField] || x["id"];
+  const getIndex = (x: Base<Item>) =>
+    (indexField && (x as any)[indexField]) || x["id"];
   return {
-    [`CREATE_${namespace}`]: (state: Collection, newItem: Item) =>
+    [`CREATE_${namespace}`]: (state: Collection, newItem: Base<Item>) =>
       assoc(newItem.id, newItem, state),
     [`INDEX_${namespace}`]: (_state: Collection, items: Item[]) =>
       indexBy(indexField || "id", items) as Collection,
