@@ -8,6 +8,7 @@ export interface ApiFactoryOptions {
 }
 
 export interface ApiOptions<T> {
+  fetchOptions?: RequestInit;
   singular?: string;
   accessor?: (x: any) => T | void;
 }
@@ -43,7 +44,7 @@ interface JsonRequestData<T> {
 const Factory: (factoryOpts: ApiFactoryOptions) => ApiFactory = ({
   host,
   cors
-}) => <T>(resource: string, { singular, accessor }: ApiOptions<T>) => {
+}) => <T>(resource: string, { singular, accessor, fetchOptions = {} }: ApiOptions<T>) => {
   const jsonRequest = <T>(resource: string) => ({
     id,
     body,
@@ -54,8 +55,9 @@ const Factory: (factoryOpts: ApiFactoryOptions) => ApiFactory = ({
       .filter(Boolean)
       .join("/");
     const jsonBody = !!body ? JSON.stringify(body) : undefined;
-    const headers = !!body ? { "Content-Type": "application/json" } : undefined;
+    const headers = !!body ? { ...fetchOptions.headers, "Content-Type": "application/json" } : fetchOptions.headers;
     return fetch(requestUrl, {
+      ...fetchOptions,
       headers,
       mode: cors ? "cors" : undefined,
       method,
