@@ -44,7 +44,10 @@ interface JsonRequestData<T> {
 const Factory: (factoryOpts: ApiFactoryOptions) => ApiFactory = ({
   host,
   cors
-}) => <T>(resource: string, { singular, accessor, fetchOptions = {} }: ApiOptions<T>) => {
+}) => <T>(
+  resource: string,
+  { singular, accessor, fetchOptions = {} }: ApiOptions<T>
+) => {
   const jsonRequest = <T>(resource: string) => ({
     id,
     body,
@@ -55,7 +58,9 @@ const Factory: (factoryOpts: ApiFactoryOptions) => ApiFactory = ({
       .filter(Boolean)
       .join("/");
     const jsonBody = !!body ? JSON.stringify(body) : undefined;
-    const headers = !!body ? { ...fetchOptions.headers, "Content-Type": "application/json" } : fetchOptions.headers;
+    const headers = !!body
+      ? { "Content-Type": "application/json", ...fetchOptions.headers }
+      : fetchOptions.headers;
     return fetch(requestUrl, {
       ...fetchOptions,
       headers,
@@ -63,7 +68,9 @@ const Factory: (factoryOpts: ApiFactoryOptions) => ApiFactory = ({
       method,
       body: jsonBody
     }).then((res: Response) => {
-      if (method !== "DELETE") {
+      if (res.status >= 400) {
+        throw { status: res.status, error: res.body };
+      } else if (method !== "DELETE") {
         return res.json().then(accessor || (x => x["data"]));
       }
     });
