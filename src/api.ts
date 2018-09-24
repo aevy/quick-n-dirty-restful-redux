@@ -68,10 +68,13 @@ const Factory: (factoryOpts: ApiFactoryOptions) => ApiFactory = ({
       method,
       body: jsonBody
     }).then((res: Response) => {
+      const contentType = res.headers.get("content-type");
       if (res.status >= 400) {
         throw { status: res.status, error: res.body };
-      } else if (method !== "DELETE") {
+      } else if (contentType && contentType.indexOf("application/json") !== -1) {
         return res.json().then(accessor || (x => x["data"]));
+      } else {
+        return res.text()
       }
     });
   };
