@@ -2,7 +2,7 @@ import { AnyAction, Reducer } from "redux";
 import { Dispatch } from "react-redux";
 import { Base, IdType } from "./types";
 import { ResourceApi } from "./api";
-import { assoc, indexBy, dissoc } from "./lib";
+import { assoc, indexBy, dissoc, camelizeObject } from "./lib";
 
 type ReducerFunction<T> = (state: T, ...args: any[]) => T;
 
@@ -77,14 +77,14 @@ export const createResourceReducer = <Collection extends Object, Item>(
     (indexField && (x as any)[indexField]) || x["id"];
   return {
     [`CREATE_${namespace}`]: (state: Collection, newItem: Base<Item>) =>
-      assoc(newItem.id, newItem, state),
+      assoc(newItem.id, camelizeObject(newItem), state),
     [`INDEX_${namespace}`]: (_state: Collection, items: Item[]) =>
       indexBy(indexField || "id", items) as Collection,
     [`SHOW_${namespace}`]: (state, item: Base<Item>) =>
-      assoc(getIndex(item), item, state),
+      assoc(getIndex(item), camelizeObject(item), state),
     [`UPDATE_${namespace}`]: (state, update: Base<Item>) => ({
       ...(state as object),
-      [getIndex(update)]: update
+      [getIndex(update)]: camelizeObject(update)
     }),
     [`DESTROY_${namespace}`]: (state, id: string) => dissoc(id, state)
   };
